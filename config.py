@@ -2,8 +2,7 @@ import torch
 from functools import lru_cache
 
 MODEL_LOAD_FROM_FILE = True
-MODEL_PATH = "../bert-base-uncased/"
-# MODEL_PATH = "../distillbert-base-uncased"
+MODEL_PATH = "../bert-base-uncased/" # "../distillbert-base-uncased"
 VISIBLE_GPUS = "0,1,2,3"
 BATCH_SIZE = 16  # with accumulate step, which approximate batch size 16
 LEARNING_RATE = 2e-5  # 2e-5 5e-6
@@ -49,30 +48,4 @@ DEFAULT_PARAMS_SBERT = {
     'concatenation_sent_rep': True,
     'concatenation_sent_difference': True,
     'concatenation_sent_multiplication': False
-}
-
-DEFAULT_PARAS_GLOVE = {
-    'vocab_size': 18766,
-    'glove_dim': 300,
-    'glove_file': "./data/glove/glove_300d.npy",
-    'word2id_file': "./data/glove/word2id.npy",
-
-    'emb_method': 'glove',
-    'enc_method': 'mean',
-    'hidden_size': 200,
-    'out_size': 64,
-    'num_labels': 2,
-
-    'use_gpu': True,
-    'seed': 2020,
-    'gpu_id': 0,
-
-    'dropout': 0.5,
-    'epochs': 10,
-
-    'lr': 1e-3,
-    'weight_decay': 1e-4,
-    'batch_size': 64,
-    'device': 'cuda:0'
-
 }
