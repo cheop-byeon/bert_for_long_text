@@ -466,8 +466,8 @@ def main():
         input_path = args.input_file
     else:
         # Default paths for backward compatibility
-        path = "/Users/jiebi/Documents/ietfdata-0.4.0/tests/testset/8335"
-        file = "rfc8335"
+        path = "path/to/default/dataset"
+        file = "rfc8335" # rfc7657
         input_path = f"{path}/{file}.tsv"
         logger.warning(f"No --input_file specified, using default: {input_path}")
 
@@ -496,11 +496,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-# short
-# python3 infer.py --model_path "./AB/short/bmp.pt" --model_type "AB"
-# python3 infer.py --model_path "./AplusB/short/bmp.pt" --model_type "AplusB21"
-
-# long
-# python3 infer.py --model_path "./AB/long/bmp.pt" --model_type "AB"
-# python3 infer.py --model_path "./AplusB/long/bmp.pt"  --model_type "AplusB"
