@@ -1,0 +1,147 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+bert_for_long_text_env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Models and Checkpoints
+*.pt
+*.pth
+models/
+bmp.pt
+best-model-parameters.pt
+
+# Data files (raw and processed)
+*.tsv
+*.csv
+data/
+datasets/
+dataset/
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# BERT Model weights and config
+bert-base-uncased/
+distilbert-base-uncased/
+
+# Training outputs and logs
+wandb/
+logs/
+slurm-*.out
+slurm-*.out*
+*.log
+runs/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.~*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# User-specific files
+*.todo
+*.note
+.vscode/settings.json
+
+# Directories with large files
+AB/long/
+AB/short/
+AplusB/long/
+AplusB/short/
+SBERT/long/
+SBERT/short/
+group/
+
+# Cache files
+.cache/
+*.cache
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# Test coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Local configuration
+config.local.py
+local_config.py
+
+# Copy files
+*copy.py
+slurm-7718698.out copy
+tfidf copy.py
+
+# Miscellaneous
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Repository analysis scripts (one-time use)
+repo-list.py
+repo.count.py
+
+# Data processing utilities (not used in current pipeline)
+split.repo.py
+split_repos.ipynb
+tfidf.py
+tfidf\ copy.py
+
+# Documentation and statistics files (not code)
+repo.statistics
+repo.statistics.txt
