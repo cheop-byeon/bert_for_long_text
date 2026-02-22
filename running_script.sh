@@ -22,7 +22,7 @@ module load nlpl-transformers/4.24.0-gomkl-2021a-Python-3.9.5
 module load nlpl-nlptools/2022.01-gomkl-2021a-Python-3.9.5
 module load nlpl-wandb/0.13.1-gomkl-2021a-Python-3.9.5
 
-python3 main.py --data_path "/cluster/projects/nn9851k/jiebi/wg-github/" \
+python3 main.py --data_path "./wg-github/" \
                 --epochs 10 \
                 --model_path "./models/best-model-parameters.pt" \
                 --wandb_mode False \
