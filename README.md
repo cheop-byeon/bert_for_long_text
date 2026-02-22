@@ -58,6 +58,14 @@ The training/validation TSVs must include:
 
 Model loading and default hyperparameters live in `config.py` (e.g., `MODEL_PATH`, `MODEL_LOAD_FROM_FILE`, and default parameter dicts).
 
+## Python Virtual Environment
+
+This project includes a local virtual environment at `bert_for_long_text_env/`. To recreate the environment, create and activate a venv, then install dependencies from `requirements.txt`:
+
+- Create: `python3 -m venv bert_for_long_text_env`
+- Activate: `source bert_for_long_text_env/bin/activate`
+- Install: `pip install -r requirements.txt`
+
 
 ## Related Paper
 
