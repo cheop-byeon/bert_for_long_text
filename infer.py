@@ -15,7 +15,7 @@ from sklearn.model_selection import KFold, train_test_split
 from transformers import PreTrainedTokenizerFast, AutoModel, AdamW, BertTokenizer, BertModel, AutoConfig
 
 from lib.architecture import BERTSequenceClassificationArch, BERTSequenceClassificationArchForAB
-from lib.base_model import Model
+from lib.base_model_ga import Model
 from lib.custom_datasets import TokenizedDataset, collate_fn_pooled_tokens, TokenizedDatasetAB, collate_fn_pooled_tokens_AB
 from lib.custom_datasets_ab import TokenizedDatasetAplusB, collate_fn_pooled_tokens_AplusB
 from lib.text_preprocessors import BERTTokenizer, BERTTokenizerPooled, BERTTokenizerPooledAplusB, BERTTokenizerPooledAplusB_21

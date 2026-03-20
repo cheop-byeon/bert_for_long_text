@@ -194,7 +194,7 @@ class Model:
 
         for epoch in tqdm(list(range(args.epochs))):
             self.train_single_epoch(number_of_train_samples, train_dataloader, args)
-            eval_loss, accuracy, metrics, _, _  = self.evaluate_single_epoch(
+            eval_loss, accuracy, metrics, _, _ , scores = self.evaluate_single_epoch(
                 number_of_test_samples, test_dataloader, epoch, drafts_dev, wgs_dev, args)
             eval_f1, eval_precision, eval_recall = metrics['f1'], metrics['precision'], metrics['recall']
 
@@ -232,7 +232,7 @@ class Model:
         test_dataset = self.create_dataset(X_test_preprocessed, y_test)
         test_dataloader = create_test_dataloader(
             test_dataset, self.params['batch_size'], self.collate_fn)
-        _, _, metrics, _, _ = self.evaluate_single_epoch(
+        _, _, metrics, _, _ , _ = self.evaluate_single_epoch(
             test_samples, test_dataloader)
         return metrics
 
@@ -245,9 +245,9 @@ class Model:
         test_dataloader = create_test_dataloader(
             test_dataset, self.params['batch_size'], self.collate_fn)
 
-        _, _, metrics, _, _ = self.evaluate_single_epoch(
+        _, _, metrics, preds_total, _ , scores = self.evaluate_single_epoch(
             test_samples, test_dataloader, args)
-        return metrics
+        return metrics, preds_total, scores
 
     def predictAB(self, A_test, B_test, y_test, args):
         test_samples = len(A_test)
@@ -261,10 +261,10 @@ class Model:
         test_dataloader = create_test_dataloader(
             test_dataset, self.params['batch_size'], self.collate_fn)
 
-        _, _, metrics, preds_total, _ = self.evaluate_single_epoch(
+        _, _, metrics, preds_total, _ , scores= self.evaluate_single_epoch(
             test_samples, test_dataloader, args)
         
-        return metrics, preds_total    
+        return metrics, preds_total, scores   
     
     def train_single_epoch(self, number_of_train_samples, train_dataloader, args=None):
         model = self.nn
@@ -303,7 +303,7 @@ class Model:
             print(
                 f'Epoch: {epoch}, Train accuracy: {accuracy}, Train loss: {avg_loss}, Train f1: {f1}, Train precision: {precision}, Train recall: {recall}')
 
-    def evaluate_single_epoch(self, test_samples, test_dataloader, epoch, drafts_dev=None, wgs_dev=None, args=None):
+    def evaluate_single_epoch(self, test_samples, test_dataloader, epoch=None, drafts_dev=None, wgs_dev=None, args=None):
         model = self.nn
         total_loss = 0
         total_accurate = 0
@@ -334,7 +334,7 @@ class Model:
                 del preds, labels
                 torch.cuda.empty_cache()
 
-        metrics = binary_label_metric(preds_total, labels_total, epoch, drafts_dev, wgs_dev, args)
+        metrics, scores_total = binary_label_metric(preds_total, labels_total, epoch, drafts_dev, wgs_dev, args)
 
         # compute the evaluation loss of the epoch
         preds_total = [x.item() for x in preds_total]
@@ -342,7 +342,7 @@ class Model:
         avg_loss = total_loss / test_samples
         accuracy = total_accurate / test_samples
 
-        return avg_loss, accuracy, metrics, preds_total, labels_total
+        return avg_loss, accuracy, metrics, preds_total, labels_total, scores_total
 
 class SaveBestModel:
     """Save the best model during training based on validation metrics"""
@@ -468,4 +468,4 @@ def binary_label_metric(predictions, references, epoch=None, drafts=None, wgs=No
         "recall": recall
     }
 
-    return metrics
+    return metrics, preds_total

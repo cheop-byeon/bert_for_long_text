@@ -1,17 +1,39 @@
 # Long-Text BERT Classification (AB / A+B)
 
-This repository provides a long-text BERT pipeline focused on paragraph–commentary classification. The primary entry point is `main.py`, which handles training and evaluation with chunking/pooling for inputs longer than 512 tokens.
+This repository provides a long-text BERT pipeline for paragraph–commentary classification.
+
+Current primary entry points:
+
+- `main.py`: training + validation
+- `infer.py`: checkpoint inference + prediction export
+
+Both currently use `lib/base_model_ga.py` as the shared model loop backend.
+
+## Project diagnosis (March 2026)
+
+Static checks on active code paths are clean:
+
+- `python3 -m py_compile main.py infer.py lib/*.py tfidf.py "tfidf copy.py"` passes
+- no editor diagnostics in `main.py`, `infer.py`, `lib/base_model_ga.py`
+
+Current dependency status:
+
+- `main.py` and `infer.py` import from `lib/base_model_ga.py`
+- `lib/text_preprocessors.py` depends on `lib/pooling.py`
+
+Known caveats:
+
+- `running_script.sh` uses `--wandb_mode False`, but `main.py` expects `--enable_wandb` as a flag
+- `infer.py` defaults to a placeholder input path when `--input_file` is omitted, which will fail unless changed
+- `lib/encoder.py` exists but is not used by `main.py`/`infer.py`
 
 ## What `main.py` does
 
-- **Training + evaluation** with early stopping and best-checkpoint saving.
-- **K-fold** training via `--kfold` (expects `train.{fold}.tsv` and `valid.{fold}.tsv`).
-- **Model selection** via `--model_type` (AB, AplusB, AplusB21, SBERT).
-- **Optional W&B logging** (`--enable_wandb`), with offline mode on GPU by default.
-- **Evaluation exports** to `--eval_path` as `group.{epoch}.csv` containing predictions, labels, and metadata.
-
-See [running_script.sh](running_script.sh) for training and evaluation examples.  
-See [infer_script.sh](infer_script.sh) for inference examples.
+- training + evaluation with early stopping and best-checkpoint saving
+- K-fold training via `--kfold` (expects `train.{fold}.tsv` and `valid.{fold}.tsv`)
+- model selection via `--model_type` (`AB`, `AplusB`, `AplusB21`, `SBERT`)
+- optional W&B logging via `--enable_wandb`
+- evaluation exports to `--eval_path` as `group.{epoch}.csv`
 
 ## Input Data Format
 
@@ -30,29 +52,52 @@ The training/validation TSVs must include:
 - **AplusB**: Joint paragraph+commentary representation with pooled chunks.
 - **AplusB21**: Joint paragraph+commentary packed into a single 512-token sequence.
 
-## Key CLI arguments
+## CLI arguments (active)
 
-- `--data_path`: Folder containing `train.{fold}.tsv` and `valid.{fold}.tsv`
-- `--epochs`, `--batch_size`, `--patience`
+### `main.py`
+
+- `--data_path`: folder containing `train.{fold}.tsv` and `valid.{fold}.tsv`
 - `--model_type`: `AB`, `AplusB`, `AplusB21`, `SBERT`
+- `--epochs`, `--batch_size`, `--patience`, `--kfold`
 - `--model_path`: checkpoint output path
 - `--eval_path`: folder for per-epoch evaluation CSVs
-- `--max_slice`, `--pooling`: long-text chunking and pooling behavior
-- `--enable_wandb`, `--seed`, `--kfold`
+- `--max_slice`: max commentary chunks kept in AB/SBERT path
+- `--pooling`: pooling strategy selector (0=mean, 1=max)
+- `--max_tokens`: token limit argument (used by preprocessing settings)
+- `--seed`, `--visible_gpus`, `--parallel`, `--resume`, `--verbose`
+- `--enable_wandb`: enable W&B (otherwise disabled)
+
+### `infer.py`
+
+- `--input_file`: input TSV for inference (recommended)
+- `--model_path`: trained checkpoint path
+- `--model_type`: `AB`, `AplusB`, `AplusB21`
+- `--max_slice`, `--pooling`, `--max_tokens`: preprocessing/chunking controls
+- `--batch_size`, `--epochs`, `--patience`, `--seed`, `--visible_gpus`
+- outputs `*.predictions.tsv` next to input file
+
+## Minimal commands
+
+Training:
+
+`python3 main.py --data_path ./wg-github/ --epochs 10 --model_type AB --model_path ./models/best-model-parameters.pt --patience 5`
+
+Inference:
+
+`python3 infer.py --input_file ./overview-update.tsv --model_path ./AB/short/bmp.pt --model_type AB`
 
 ## Library layout (lib/)
 
 - `architecture.py`: BERT and SBERT classification architectures, pooling, and similarity functions.
-- `base_model.py`: Core training/evaluation loop, early stopping, metrics, and CSV export.
-- `base_model_amp.py`: Same as base model with AMP (`torch.cuda.amp`) mixed-precision training.
-- `base_model_ga.py`: Base model with gradient accumulation.
+- `base_model_ga.py`: active base loop used by `main.py` and `infer.py`.
 - `custom_datasets.py`: Tokenized datasets and collate fns for single-text and AB inputs.
 - `custom_datasets_ab.py`: Dataset/collate for A+B combined inputs.
 - `text_preprocessors.py`: Tokenizers and pooled chunking for long-text inputs.
 - `pooling.py`: Chunking utilities and paragraph–commentary packing helpers.
 - `linear_lr.py`: Linear learning-rate scheduler.
-- `encoder.py`: Generic CNN/RNN/Transformer encoder with positional embeddings.
-- `embed.py`: Alternative model using GloVe embeddings + `Encoder`.
+- `encoder.py`: legacy encoder module (currently unused by `main.py`/`infer.py`).
+
+Note: some legacy/local files (for example `base_model.py`, `base_model_amp.py`, TF-IDF experiments) may exist in local worktrees but are not part of the tracked main pipeline.
 
 ## Configuration
 
